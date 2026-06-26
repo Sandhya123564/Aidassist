@@ -1,0 +1,110 @@
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --primary: 173 80% 40%;
+    --primary-foreground: 0 0% 100%;
+    --action: 238 77% 60%;
+    --action-foreground: 0 0% 100%;
+    --background: 24 9% 98%;
+    --foreground: 222 47% 11%;
+    --card: 0 0% 100%;
+    --card-foreground: 222 47% 11%;
+    --secondary: 24 10% 96%;
+    --secondary-foreground: 222 47% 11%;
+    --muted: 24 10% 96%;
+    --muted-foreground: 215 14% 34%;
+    --accent: 24 10% 96%;
+    --accent-foreground: 222 47% 11%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 24 6% 90%;
+    --input: 24 6% 83%;
+    --ring: 238 77% 60%;
+    --radius: 1rem;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  
+  body {
+    @apply bg-stone-50 text-gray-900 font-[Inter];
+    font-size: 16px;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-[Manrope];
+  }
+
+  /* High Contrast Mode */
+  .high-contrast {
+    --foreground: 0 0% 0%;
+    --background: 0 0% 100%;
+    --border: 0 0% 20%;
+  }
+
+  .high-contrast body {
+    @apply bg-white text-black;
+  }
+
+  /* Large Text Mode */
+  .large-text {
+    font-size: 20px;
+  }
+
+  .large-text h1 {
+    @apply text-5xl md:text-6xl;
+  }
+
+  .large-text h2 {
+    @apply text-3xl md:text-4xl;
+  }
+
+  .large-text .text-lg {
+    @apply text-xl;
+  }
+}
+
+@layer components {
+  /* Animation classes */
+  .animate-in {
+    animation: slideIn 0.3s ease-out;
+  }
+
+  @keyframes slideIn {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-stone-100;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-stone-300 rounded-full;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-stone-400;
+  }
+}

@@ -1,0 +1,144 @@
+{
+  "project_metadata": {
+    "name": "AidAssist",
+    "persona": "E1 - The Anti-AI Designer",
+    "mission": "Create a trustworthy, accessible, and professional hearing aid troubleshooting assistant for India.",
+    "theme": "light",
+    "archetype": "Organic & Earthy (Trust) + Swiss High-Contrast (Clarity)"
+  },
+  "design_system": {
+    "colors": {
+      "primary": {
+        "name": "Medical Teal",
+        "value": "#0D9488",
+        "tailwind": "teal-600",
+        "description": "Used for success states, brand identity, and header backgrounds. Calming and professional."
+      },
+      "action": {
+        "name": "Trust Indigo",
+        "value": "#4F46E5",
+        "tailwind": "indigo-600",
+        "description": "Used EXCLUSIVELY for primary buttons (Next, Login, Start). distinct from brand color to drive action."
+      },
+      "background": {
+        "default": "#FAFAFA",
+        "tailwind": "bg-stone-50",
+        "paper": "#FFFFFF",
+        "tailwind_paper": "bg-white",
+        "description": "Warm off-white to reduce glare. Pure white only for cards."
+      },
+      "text": {
+        "primary": "#111827",
+        "tailwind": "text-gray-900",
+        "secondary": "#374151",
+        "tailwind": "text-gray-700",
+        "description": "High contrast is non-negotiable. Never use light gray for text."
+      },
+      "status": {
+        "error": "#DC2626",
+        "warning": "#D97706",
+        "success": "#059669"
+      }
+    },
+    "typography": {
+      "font_family": {
+        "heading": "Manrope, sans-serif",
+        "body": "Inter, sans-serif"
+      },
+      "scaling": {
+        "base": "text-lg",
+        "heading_xl": "text-4xl md:text-5xl font-bold tracking-tight",
+        "heading_lg": "text-2xl md:text-3xl font-semibold",
+        "body_lg": "text-lg leading-relaxed",
+        "body_md": "text-base leading-relaxed"
+      },
+      "rules": "All body text must be at least 16px (1rem). Troubleshooting steps should be 18px (1.125rem)."
+    },
+    "spacing": {
+      "base": "p-6",
+      "container": "max-w-md mx-auto",
+      "section": "py-12 md:py-20",
+      "gap": "gap-6"
+    },
+    "shapes": {
+      "radius": "rounded-xl",
+      "buttons": "rounded-full",
+      "inputs": "rounded-lg"
+    },
+    "shadows": {
+      "card": "shadow-[0_4px_20px_-4px_rgba(0,0,0,0.1)]",
+      "float": "shadow-[0_8px_30px_rgb(0,0,0,0.12)]"
+    }
+  },
+  "components": {
+    "buttons": {
+      "primary": "bg-indigo-600 hover:bg-indigo-700 text-white font-medium px-8 py-3 rounded-full transition-transform active:scale-95 shadow-lg shadow-indigo-200",
+      "secondary": "bg-white border-2 border-stone-200 text-stone-700 hover:border-indigo-600 hover:text-indigo-600 px-8 py-3 rounded-full transition-colors",
+      "ghost": "text-stone-600 hover:bg-stone-100 px-4 py-2 rounded-lg"
+    },
+    "cards": {
+      "base": "bg-white border border-stone-100 rounded-2xl shadow-sm p-6 hover:shadow-md transition-shadow duration-300",
+      "interactive": "cursor-pointer hover:border-indigo-600 hover:ring-1 hover:ring-indigo-600"
+    },
+    "inputs": {
+      "base": "h-12 bg-white border-stone-300 focus:border-indigo-600 focus:ring-indigo-600 rounded-lg text-lg"
+    }
+  },
+  "layout_strategies": {
+    "wizard_flow": {
+      "container": "max-w-md mx-auto px-4 py-8",
+      "header": "text-center mb-8",
+      "progress": "w-full h-2 bg-stone-200 rounded-full mb-8 overflow-hidden",
+      "step_card": "bg-white p-6 rounded-2xl shadow-sm border border-stone-100 animate-in fade-in slide-in-from-bottom-4"
+    },
+    "dashboard": {
+      "grid": "grid grid-cols-1 md:grid-cols-3 gap-6",
+      "sidebar": "hidden"
+    }
+  },
+  "assets": {
+    "images": {
+      "hero_senior": {
+        "url": "https://images.unsplash.com/photo-1752084794888-0b27a762b6fd?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA2MDV8MHwxfHNlYXJjaHwzfHxJbmRpYW4lMjBzZW5pb3IlMjBjaXRpemVuJTIwc21pbGluZyUyMGhlYXJpbmclMjBhaWR8ZW58MHx8fHwxNzcyNTcwNzI5fDA&ixlib=rb-4.1.0&q=85",
+        "alt": "Happy senior citizen using hearing aid",
+        "category": "hero"
+      },
+      "device_closeup": {
+        "url": "https://images.pexels.com/photos/14682242/pexels-photo-14682242.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+        "alt": "Close up of hearing aid device",
+        "category": "troubleshooting"
+      },
+      "doctor_consult": {
+        "url": "https://images.unsplash.com/photo-1659353888096-cc5e333db5e0?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjAzMzl8MHwxfHNlYXJjaHwzfHxpbmRpYW4lMjBkb2N0b3IlMjBsaXN0ZW5pbmclMjB0byUyMHBhdGllbnR8ZW58MHx8fHwxNzcyNTcwNzIxfDA&ixlib=rb-4.1.0&q=85",
+        "alt": "Doctor consulting patient",
+        "category": "support"
+      },
+      "family_trust": {
+        "url": "https://images.unsplash.com/photo-1542800950-a0fd5c06bd11?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTY2Nzh8MHwxfHNlYXJjaHwxfHxoYXBweSUyMGluZGlhbiUyMGdyYW5kbW90aGVyJTIwd2l0aCUyMGdyYW5kY2hpbGR8ZW58MHx8fHwxNzcyNTcwNzIyfDA&ixlib=rb-4.1.0&q=85",
+        "alt": "Grandmother with grandchild",
+        "category": "landing"
+      }
+    },
+    "icons": {
+      "library": "lucide-react",
+      "style": "stroke-width: 2px"
+    }
+  },
+  "accessibility_checklist": [
+    "Ensure all text has a contrast ratio of at least 4.5:1 against its background.",
+    "Interactive elements must have a minimum target size of 44x44px.",
+    "All images must have descriptive alt text.",
+    "Focus states must be clearly visible (ring-2 ring-indigo-600).",
+    "Support text resizing up to 200% without breaking layout.",
+    "Use semantic HTML (main, nav, article, aside)."
+  ],
+  "universal_guidelines": [
+    "Do NOT use 'Inter' for headings. Use 'Manrope'.",
+    "Avoid full-screen gradients. Use subtle background textures or solid colors.",
+    "Buttons must have 'cursor-pointer' and 'active:scale-95' for tactile feel.",
+    "Forms must use 'Shadcn' components but styled with 'h-12' for better touch targets.",
+    "Always include a 'Safety Disclaimer' at the bottom of troubleshooting pages.",
+    "Use 'Sonner' for toasts, positioned 'top-center' for mobile visibility."
+  ],
+  "instructions_to_main_agent": "Start by setting up the theme in 'index.css' and 'tailwind.config.js'. Then build the 'Layout' component with the navigation. Proceed to 'Landing Page', then 'Auth', and finally the 'Troubleshooting Wizard'. Ensure the wizard state is managed globally or via context to prevent data loss on refresh."
+}
