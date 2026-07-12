@@ -1,4 +1,4 @@
-#from rag_service import search_documents
+from rag_service import search_documents
 from fastapi import FastAPI, APIRouter, HTTPException, status, Header, Depends
 from fastapi.responses import Response
 from dotenv import load_dotenv
@@ -236,26 +236,30 @@ async def get_current_step(session_id: str, current_user: str = Depends(get_curr
     issue_category = session["classification_result"]["issue_category"]
     print("Issue:", issue_category)
 
-    #rag_results = search_documents(issue_category)
-    #print("RAG Results:", len(rag_results))
+    rag_results = search_documents(issue_category)
+    print("RAG Results:", len(rag_results))
 
-    #if rag_results:
-     #   print(rag_results[0].page_content)
+    if rag_results:
+        print(rag_results[0].page_content)
 
-    
+    rag_results = search_documents(issue_category)
+    print("RAG Results:", len(rag_results))
+
+    if rag_results:
+        print(rag_results[0].page_content)
+
 
     # Existing troubleshooting steps
-   # steps = get_steps_for_issue(issue_category)
+    steps = get_steps_for_issue(issue_category)
 
     # Add RAG information to the first step
-    #if rag_results and "📖 User Guide Information:" not in steps[0]["instructions"]["en"]:
-       # steps[0]["instructions"]["en"] += (
-       ##  "\n\n📖 User Guide Information:\n\n"
-        # + rag_results[0].page_content
-    #)
+    if rag_results:
+        steps[0]["instructions"]["en"] += (
+            "\n\n📖 User Guide Information:\n\n"
+            + rag_results[0].page_content
+        )
 
     current_step_index = session.get("current_step_index", 0)
-
 
     if current_step_index >= len(steps):
         raise HTTPException(
@@ -296,15 +300,14 @@ async def update_step(session_id: str, step_update: SessionUpdate, current_user:
     # Update status based on action
     new_status = session['status']
     current_step_index = session.get('current_step_index', 0)
-    issue_category = session["classification_result"]["issue_category"]
-    steps = get_steps_for_issue(issue_category)
     
     if step_update.action == "FIXED":
         new_status = "resolved"
     elif step_update.action == "CONTINUE":
         current_step_index += 1
         # Check if this was the last step (ESCALATE)
-       
+        issue_category = session['classification_result']['issue_category']
+        steps = get_steps_for_issue(issue_category)
         if current_step_index >= len(steps):
             new_status = "escalated"
     
