@@ -27,8 +27,8 @@ google-api-python-client==2.191.0
 google-auth==2.39.0
 google-auth-httplib2==0.2.0
 googleapis-common-protos==1.72.0
-grpcio==1.62.3
-grpcio-status==1.62.3
+grpcio==1.74.0
+grpcio-status==1.74.0
 protobuf==4.25.8
 
 httpx==0.28.1
