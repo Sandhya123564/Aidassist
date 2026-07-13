@@ -20,15 +20,6 @@ pymongo==4.5.0
 dnspython==2.8.0
 
 openai==1.99.9
-google-generativeai==0.8.5
-google-ai-generativelanguage==0.6.15
-google-api-core==2.30.0
-google-api-python-client==2.191.0
-google-auth==2.39.0
-google-auth-httplib2==0.2.0
-googleapis-common-protos==1.72.0
-
-grpcio-status==1.74.0
 
 httpx==0.28.1
 httpcore==1.0.9
