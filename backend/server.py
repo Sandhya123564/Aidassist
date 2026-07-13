@@ -1,4 +1,4 @@
-from rag_service import search_documents
+#from rag_service import search_documents
 from fastapi import FastAPI, APIRouter, HTTPException, status, Header, Depends
 from fastapi.responses import Response
 from dotenv import load_dotenv
