@@ -245,19 +245,19 @@ async def get_current_step(session_id: str, current_user: str = Depends(get_curr
     #rag_results = search_documents(issue_category)
     #print("RAG Results:", len(rag_results))
 
-    if rag_results:
-        print(rag_results[0].page_content)
+    #if rag_results:
+     #   print(rag_results[0].page_content)
 
 
     # Existing troubleshooting steps
     steps = get_steps_for_issue(issue_category)
 
     # Add RAG information to the first step
-    if rag_results:
-        steps[0]["instructions"]["en"] += (
-            "\n\n📖 User Guide Information:\n\n"
-            + rag_results[0].page_content
-        )
+    #if rag_results:
+     #   steps[0]["instructions"]["en"] += (
+      #      "\n\n📖 User Guide Information:\n\n"
+       #     + rag_results[0].page_content
+        #)
 
     current_step_index = session.get("current_step_index", 0)
 
