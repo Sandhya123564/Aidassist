@@ -304,16 +304,21 @@ async def update_step(session_id: str, step_update: SessionUpdate, current_user:
     # Update status based on action
     new_status = session['status']
     current_step_index = session.get('current_step_index', 0)
-    
+
+    issue_category = session['classification_result']['issue_category']
+    steps = get_steps_for_issue(issue_category)
+
     if step_update.action == "FIXED":
-        new_status = "resolved"
+       new_status = "resolved"
+
     elif step_update.action == "CONTINUE":
         current_step_index += 1
-        # Check if this was the last step (ESCALATE)
-        issue_category = session['classification_result']['issue_category']
-        steps = get_steps_for_issue(issue_category)
+
         if current_step_index >= len(steps):
-            new_status = "escalated"
+           new_status = "escalated"
+        # Check if this was the last step (ESCALATE)
+        
+        
     
     # Update session
     await db.sessions.update_one(
