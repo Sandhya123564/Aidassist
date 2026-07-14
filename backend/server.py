@@ -226,6 +226,8 @@ async def get_current_step(session_id: str, current_user: str = Depends(get_curr
         {"id": session_id, "user_email": current_user},
         {"_id": 0}
     )
+    print(">>> get_current_step API called")
+    print("Session ID:", session_id)
 
     if not session:
          raise HTTPException(
@@ -243,7 +245,9 @@ async def get_current_step(session_id: str, current_user: str = Depends(get_curr
         print(rag_results[0].page_content)
 
     rag_results = search_documents(issue_category)
-    print("RAG Results:", len(rag_results))
+    print("Issue category:", issue_category)
+    print("RAG Results Count:", len(rag_results))
+
 
     if rag_results:
         print(rag_results[0].page_content)
@@ -252,12 +256,12 @@ async def get_current_step(session_id: str, current_user: str = Depends(get_curr
     # Existing troubleshooting steps
     steps = get_steps_for_issue(issue_category)
 
-    # Add RAG information to the first step
-    #if rag_results:
-     #   steps[0]["instructions"]["en"] += (
-      #      "\n\n📖 User Guide Information:\n\n"
-       #     + rag_results[0].page_content
-        #)
+    #Add RAG information to the first step
+    if rag_results:
+        steps[0]["instructions"]["en"] += (
+            "\n\n📖 User Guide Information:\n\n"
+            + rag_results[0].page_content
+        )
 
     current_step_index = session.get("current_step_index", 0)
 
@@ -286,7 +290,7 @@ async def update_step(session_id: str, step_update: SessionUpdate, current_user:
             detail="Session not found"
         )
     
-    # Add step to attempted steps
+    #Add step to attempted steps
     step_record = {
         "step_id": step_update.step_id,
         "action": step_update.action,

@@ -21,5 +21,13 @@ db = Chroma(
 print("Chroma DB opened.")
 
 def search_documents(query):
+    print("Searching for:", query)
+
     docs = db.similarity_search(query, k=3)
+
+    print("Documents found:", len(docs))
+
+    if docs:
+        print("First document:", docs[0].page_content[:200])
+
     return docs
