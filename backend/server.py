@@ -1,4 +1,4 @@
-#from rag_service import search_documents
+from rag_service import search_documents
 from fastapi import FastAPI, APIRouter, HTTPException, status, Header, Depends
 from fastapi.responses import Response
 from dotenv import load_dotenv
@@ -236,17 +236,17 @@ async def get_current_step(session_id: str, current_user: str = Depends(get_curr
     issue_category = session["classification_result"]["issue_category"]
     print("Issue:", issue_category)
 
-    #rag_results = search_documents(issue_category)
-    #print("RAG Results:", len(rag_results))
+    rag_results = search_documents(issue_category)
+    print("RAG Results:", len(rag_results))
 
-    #if rag_results:
-     #   print(rag_results[0].page_content)
+    if rag_results:
+        print(rag_results[0].page_content)
 
-    #rag_results = search_documents(issue_category)
-    #print("RAG Results:", len(rag_results))
+    rag_results = search_documents(issue_category)
+    print("RAG Results:", len(rag_results))
 
-    #if rag_results:
-     #   print(rag_results[0].page_content)
+    if rag_results:
+        print(rag_results[0].page_content)
 
 
     # Existing troubleshooting steps
