@@ -10,6 +10,7 @@ import { RadioGroup, RadioGroupItem } from '../components/ui/radio-group';
 import { Progress } from '../components/ui/progress';
 import axios from 'axios';
 import { toast } from 'sonner';
+import { Input } from '../components/ui/input';
 import {
   Stethoscope, ArrowLeft, ArrowRight, Mic, MicOff, Loader2,
   CheckCircle, AlertTriangle, Phone, Download
@@ -22,6 +23,8 @@ const TroubleshootingFlow = () => {
   
   const [step, setStep] = useState('triage'); // triage, classify, steps, escalation
   const [triageData, setTriageData] = useState({
+    brand: '',
+    model: '',
     main_issue: '',
     side: '',
     device_type: '',
@@ -36,14 +39,19 @@ const TroubleshootingFlow = () => {
   const [isListening, setIsListening] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const t = useCallback((key) => getTranslation(key, language), [language]);
+const t = useCallback((key) => getTranslation(key, language), [language]);
 
-useEffect(() => {
-  const sid = searchParams.get('session');
-  if (sid) {
-    loadSession(sid);
+const fetchCurrentStep = useCallback(async (sid) => {
+  try {
+    const response = await axios.get(`${API}/session/${sid}/current-step`);
+    setCurrentStep(response.data);
+    setStepProgress(response.data.progress);
+  } catch (error) {
+    console.error('Failed to fetch current step', error);
+    toast.error(t('error'));
   }
-}, [loadSession, searchParams]);
+}, [API, t]);
+
 
 const loadSession = useCallback(async (sid) => {
   try {
@@ -57,62 +65,65 @@ const loadSession = useCallback(async (sid) => {
       await fetchCurrentStep(sid);
       setStep('steps');
     }
+
   } catch (error) {
     console.error('Failed to load session', error);
     toast.error(t('error'));
   }
 }, [API, fetchCurrentStep, t]);
 
-  const handleTriageSubmit = async () => {
-    if (!triageData.main_issue || !triageData.side || !triageData.device_type || !triageData.power_type) {
-      toast.error('Please fill in all required fields');
-      return;
-    }
 
-    setLoading(true);
-    try {
-      // Submit triage
-      await axios.post(`${API}/triage/submit`, {
-        ...triageData,
-        language
-      });
-
-      // Classify issue
-      const classifyResponse = await axios.post(`${API}/classify`, {
-        complaint_text: `${triageData.main_issue}. ${triageData.additional_details}`,
-        triage_data: triageData,
-        language
-      });
-
-      // Create session
-      const sessionResponse = await axios.post(`${API}/session/create`, {
-        triage_data: triageData,
-        classification_result: classifyResponse.data,
-        language
-      });
-
-      setSessionId(sessionResponse.data.session_id);
-      await fetchCurrentStep(sessionResponse.data.session_id);
-      setStep('steps');
-      toast.success('Analysis complete');
-    } catch (error) {
-      console.error('Triage error', error);
-      toast.error(t('error'));
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const fetchCurrentStep = useCallback(async (sid) => {
-  try {
-    const response = await axios.get(`${API}/session/${sid}/current-step`);
-    setCurrentStep(response.data);
-    setStepProgress(response.data.progress);
-  } catch (error) {
-    console.error('Failed to fetch current step', error);
-    toast.error(t('error'));
+useEffect(() => {
+  const sid = searchParams.get('session');
+  if (sid) {
+    loadSession(sid);
   }
-}, [API, t]);
+}, [loadSession, searchParams]);
+const handleTriageSubmit = async () => {
+  if (!triageData.main_issue || !triageData.side || !triageData.device_type || !triageData.power_type) {
+    toast.error('Please fill in all required fields');
+    return;
+  }
+
+  setLoading(true);
+
+  try {
+    await axios.post(`${API}/triage/submit`, {
+  ...triageData,
+  brand: triageData.brand,
+  model: triageData.model,
+  language
+});
+    const classifyResponse = await axios.post(`${API}/classify`, {
+      complaint_text: `${triageData.main_issue}. ${triageData.additional_details}`,
+      triage_data: triageData,
+      language
+    });
+
+    const sessionResponse = await axios.post(`${API}/session/create`, {
+  triage_data: {
+    ...triageData,
+    brand: triageData.brand,
+    model: triageData.model,
+  },
+  classification_result: classifyResponse.data,
+  language
+});
+    setSessionId(sessionResponse.data.session_id);
+
+    await fetchCurrentStep(sessionResponse.data.session_id);
+
+    setStep('steps');
+
+    toast.success('Analysis complete');
+
+  } catch (error) {
+    console.error('Triage error', error);
+    toast.error(t('error'));
+  } finally {
+    setLoading(false);
+  }
+};
 
   const handleStepAction = async (action) => {
     if (!sessionId || !currentStep) return;
@@ -227,6 +238,96 @@ const loadSession = useCallback(async (sid) => {
             </h2>
 
             <div className="bg-white border border-stone-100 rounded-2xl p-6 space-y-6">
+            <Label>Hearing Aid Brand</Label>
+
+<Select
+  value={triageData.brand}
+  onValueChange={(value) =>
+    setTriageData({ ...triageData, brand: value })
+  }
+>
+  <SelectTrigger>
+    <SelectValue placeholder="Select Brand" />
+  </SelectTrigger>
+
+  <SelectContent>
+    <SelectItem value="Phonak">Phonak</SelectItem>
+    <SelectItem value="Signia">Signia</SelectItem>
+    <SelectItem value="Widex">Widex</SelectItem>
+    <SelectItem value="Oticon">Oticon</SelectItem>
+    <SelectItem value="ReSound">ReSound</SelectItem>
+    <SelectItem value="Starkey">Starkey</SelectItem>
+    <SelectItem value="Other">Other</SelectItem>
+  </SelectContent>
+  </Select>
+  <Label>Hearing Aid Model</Label>
+
+<Select
+  value={triageData.model}
+  onValueChange={(value) =>
+    setTriageData({ ...triageData, model: value })
+  }
+>
+  <SelectTrigger className="h-12 rounded-lg mt-2">
+    <SelectValue placeholder="Select Model" />
+  </SelectTrigger>
+
+  <SelectContent>
+
+    {triageData.brand === "Phonak" && (
+      <>
+        <SelectItem value="Audeo Lumity">Audeo Lumity</SelectItem>
+        <SelectItem value="Naida Lumity">Naida Lumity</SelectItem>
+        <SelectItem value="Virto Paradise">Virto Paradise</SelectItem>
+      </>
+    )}
+
+    {triageData.brand === "Signia" && (
+      <>
+        <SelectItem value="Pure Charge&Go IX">Pure Charge&Go IX</SelectItem>
+        <SelectItem value="Styletto IX">Styletto IX</SelectItem>
+        <SelectItem value="Insio IX">Insio IX</SelectItem>
+      </>
+    )}
+
+    {triageData.brand === "Widex" && (
+      <>
+        <SelectItem value="Moment">Moment</SelectItem>
+        <SelectItem value="SmartRIC">SmartRIC</SelectItem>
+        <SelectItem value="Magnify">Magnify</SelectItem>
+      </>
+    )}
+
+    {triageData.brand === "Oticon" && (
+      <>
+        <SelectItem value="Intent">Intent</SelectItem>
+        <SelectItem value="Real">Real</SelectItem>
+        <SelectItem value="More">More</SelectItem>
+      </>
+    )}
+
+    {triageData.brand === "ReSound" && (
+      <>
+        <SelectItem value="Nexia">Nexia</SelectItem>
+        <SelectItem value="Omnia">Omnia</SelectItem>
+        <SelectItem value="One">One</SelectItem>
+      </>
+    )}
+
+    {triageData.brand === "Starkey" && (
+      <>
+        <SelectItem value="Genesis AI">Genesis AI</SelectItem>
+        <SelectItem value="Evolv AI">Evolv AI</SelectItem>
+        <SelectItem value="Livio AI">Livio AI</SelectItem>
+      </>
+    )}
+
+    {triageData.brand === "Other" && (
+      <SelectItem value="Other">Other</SelectItem>
+    )}
+
+  </SelectContent>
+</Select>
               <div>
                 <Label>{t('main_issue')}</Label>
                 <Select

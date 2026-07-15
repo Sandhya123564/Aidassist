@@ -25,7 +25,7 @@ export const AppProvider = ({ children }) => {
 
 const fetchCurrentUser = useCallback(async () => {
   try {
-    const response = await axios.get('${API}/auth/me');
+    const response = await axios.get(`${API}/auth/me`);
     setUser(response.data);
     setLanguage(response.data.preferred_language || 'en');
     setLoading(false);
