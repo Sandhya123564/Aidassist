@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState, useCallback } from "react";
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
 import { getTranslation } from '../utils/translations';
@@ -36,31 +36,32 @@ const TroubleshootingFlow = () => {
   const [isListening, setIsListening] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const t = (key) => getTranslation(key, language);
+  const t = useCallback((key) => getTranslation(key, language), [language]);
 
-  useEffect(() => {
-    const sid = searchParams.get('session');
-    if (sid) {
-      loadSession(sid);
-    }
-  }, []);
+useEffect(() => {
+  const sid = searchParams.get('session');
+  if (sid) {
+    loadSession(sid);
+  }
+}, [loadSession, searchParams]);
 
-  const loadSession = async (sid) => {
-    try {
-      const response = await axios.get(`${API}/session/${sid}`);
-      setSessionId(sid);
-      setTriageData(response.data.triage_data);
-      if (response.data.status === 'resolved' || response.data.status === 'escalated') {
-        setStep('escalation');
-      } else {
-        await fetchCurrentStep(sid);
-        setStep('steps');
-      }
-    } catch (error) {
-      console.error('Failed to load session', error);
-      toast.error(t('error'));
+const loadSession = useCallback(async (sid) => {
+  try {
+    const response = await axios.get(`${API}/session/${sid}`);
+    setSessionId(sid);
+    setTriageData(response.data.triage_data);
+
+    if (response.data.status === 'resolved' || response.data.status === 'escalated') {
+      setStep('escalation');
+    } else {
+      await fetchCurrentStep(sid);
+      setStep('steps');
     }
-  };
+  } catch (error) {
+    console.error('Failed to load session', error);
+    toast.error(t('error'));
+  }
+}, [API, fetchCurrentStep, t]);
 
   const handleTriageSubmit = async () => {
     if (!triageData.main_issue || !triageData.side || !triageData.device_type || !triageData.power_type) {
@@ -102,20 +103,16 @@ const TroubleshootingFlow = () => {
     }
   };
 
-  const fetchCurrentStep = async (sid) => {
-    try {
-      const response = await axios.get(`${API}/session/${sid}/current-step`);
-      setCurrentStep(response.data);
-      setStepProgress(response.data.progress);
-    } catch (error) {
-      if (error.response?.status === 400) {
-        setStep('escalation');
-      } else {
-        console.error('Failed to fetch step', error);
-        toast.error(t('error'));
-      }
-    }
-  };
+  const fetchCurrentStep = useCallback(async (sid) => {
+  try {
+    const response = await axios.get(`${API}/session/${sid}/current-step`);
+    setCurrentStep(response.data);
+    setStepProgress(response.data.progress);
+  } catch (error) {
+    console.error('Failed to fetch current step', error);
+    toast.error(t('error'));
+  }
+}, [API, t]);
 
   const handleStepAction = async (action) => {
     if (!sessionId || !currentStep) return;
