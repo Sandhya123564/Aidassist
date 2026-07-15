@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
 import { getTranslation } from '../utils/translations';
@@ -13,23 +13,23 @@ const Dashboard = () => {
   const [sessions, setSessions] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const t = (key) => getTranslation(key, language);
+    const t = useCallback((key) => getTranslation(key, language), [language]);
 
-  useEffect(() => {
-    fetchSessions();
-  }, []);
+const fetchSessions = useCallback(async () => {
+  try {
+    const response = await axios.get(`${API}/session/history`);
+    setSessions(response.data.sessions);
+  } catch (error) {
+    console.error('Failed to fetch sessions', error);
+    toast.error(t('error'));
+  } finally {
+    setLoading(false);
+  }
+}, [API, t]);
 
-  const fetchSessions = async () => {
-    try {
-      const response = await axios.get(`${API}/session/history`);
-      setSessions(response.data.sessions);
-    } catch (error) {
-      console.error('Failed to fetch sessions', error);
-      toast.error(t('error'));
-    } finally {
-      setLoading(false);
-    }
-  };
+useEffect(() => {
+  fetchSessions();
+}, [fetchSessions]);
 
   const stats = {
     total: sessions.length,

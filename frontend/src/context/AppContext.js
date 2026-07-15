@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 
 const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
@@ -21,31 +21,31 @@ export const AppProvider = ({ children }) => {
   const [highContrast, setHighContrast] = useState(false);
   const [largeText, setLargeText] = useState(false);
 
-  // Axios interceptor for auth
-  useEffect(() => {
-    if (token) {
-      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-      fetchCurrentUser();
-    } else {
-      setLoading(false);
-    }
-  }, [token]);
+ // Axios interceptor for auth
 
-  const fetchCurrentUser = async () => {
-    try {
-      const response = await axios.get(`${API}/auth/me`);
-      setUser(response.data);
-      setLanguage(response.data.preferred_language || 'en');
-      setLoading(false);
-    } catch (error) {
-      console.error('Failed to fetch user', error);
-      // Only logout if unauthorized (401), not on network errors
-      if (error.response?.status === 401) {
-        logout();
-      }
-      setLoading(false);
+const fetchCurrentUser = useCallback(async () => {
+  try {
+    const response = await axios.get('${API}/auth/me');
+    setUser(response.data);
+    setLanguage(response.data.preferred_language || 'en');
+    setLoading(false);
+  } catch (error) {
+    console.error('Failed to fetch user', error);
+    if (error.response?.status === 401) {
+      logout();
     }
-  };
+    setLoading(false);
+  }
+}, []);
+
+useEffect(() => {
+  if (token) {
+    axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+    fetchCurrentUser();
+  } else {
+    setLoading(false);
+  }
+}, [token, fetchCurrentUser]);
 
   const login = async (email, password) => {
     try {
