@@ -1,7 +1,9 @@
 from langchain_community.vectorstores import Chroma
 from langchain_huggingface import HuggingFaceEmbeddings
 
-CHROMA_DB = "chroma_db"
+from pathlib import Path
+
+CHROMA_DB = str(Path(_file_).parent / "chroma_db")
 
 embeddings = None
 db = None
