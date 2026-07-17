@@ -1,33 +1,34 @@
 from langchain_community.vectorstores import Chroma
 from langchain_huggingface import HuggingFaceEmbeddings
 
-print("Loading embeddings...")
+from pathlib import Path
 
-CHROMA_DB = "chroma_db"
+CHROMA_DB = str(Path(_file_).parent / "chroma_db")
 
-embeddings = HuggingFaceEmbeddings(
-    model_name="sentence-transformers/all-MiniLM-L6-v2"
-)
+embeddings = None
+db = None
 
-print("Embeddings loaded.")
+def load_db():
+    global embeddings, db
 
-print("Opening Chroma DB...")
+    if db is None:
+        print("Loading embeddings...")
 
-db = Chroma(
-    persist_directory=CHROMA_DB,
-    embedding_function=embeddings
-)
+        embeddings = HuggingFaceEmbeddings(
+            model_name="sentence-transformers/all-MiniLM-L6-v2"
+        )
 
-print("Chroma DB opened.")
+        print("Opening Chroma DB...")
+
+        db = Chroma(
+            persist_directory=CHROMA_DB,
+            embedding_function=embeddings
+        )
+
+        print("Chroma DB opened.")
 
 def search_documents(query):
-    print("Searching for:", query)
+    load_db()
 
     docs = db.similarity_search(query, k=3)
-
-    print("Documents found:", len(docs))
-
-    if docs:
-        print("First document:", docs[0].page_content[:200])
-
     return docs
