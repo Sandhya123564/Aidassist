@@ -1,4 +1,8 @@
+print("STEP 1")
+
 from rag_service import search_documents
+
+print("STEP 2")
 from fastapi import FastAPI, APIRouter, HTTPException, status, Header, Depends
 from fastapi.responses import Response
 from dotenv import load_dotenv

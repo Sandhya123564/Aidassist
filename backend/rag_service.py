@@ -1,9 +1,10 @@
 from langchain_community.vectorstores import Chroma
 from langchain_huggingface import HuggingFaceEmbeddings
 
-from pathlib import Path
+from pathlib import Patht
+import os
 
-CHROMA_DB = str(Path(_file_).parent / "chroma_db")
+CHROMA_DB = Path(_file_).parent / "chroma_db"
 
 embeddings = None
 db = None
@@ -11,24 +12,23 @@ db = None
 def load_db():
     global embeddings, db
 
-    if db is None:
-        print("Loading embeddings...")
+    if db is not None:
+        return
 
-        embeddings = HuggingFaceEmbeddings(
-            model_name="sentence-transformers/all-MiniLM-L6-v2"
-        )
+    if not CHROMA_DB.exists():
+        raise Exception(f"Chroma DB not found: {CHROMA_DB}")
 
-        print("Opening Chroma DB...")
+    print("Loading embeddings...")
 
-        db = Chroma(
-            persist_directory=CHROMA_DB,
-            embedding_function=embeddings
-        )
+    embeddings = HuggingFaceEmbeddings(
+        model_name="sentence-transformers/all-MiniLM-L6-v2"
+    )
 
-        print("Chroma DB opened.")
+    print("Opening Chroma DB...")
 
-def search_documents(query):
-    load_db()
+    db = Chroma(
+        persist_directory=str(CHROMA_DB),
+        embedding_function=embeddings
+    )
 
-    docs = db.similarity_search(query, k=3)
-    return docs
+    print("Chroma DB opened.")
