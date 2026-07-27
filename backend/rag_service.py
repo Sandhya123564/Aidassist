@@ -20,9 +20,10 @@ def load_db():
 
     print("Loading embeddings...")
 
+    
     embeddings = HuggingFaceEmbeddings(
-        model_name="sentence-transformers/all-MiniLM-L6-v2"
-    )
+    model_name="./models/all-MiniLM-L6-v2"
+)
 
     print("Opening Chroma DB...")
 
