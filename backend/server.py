@@ -243,17 +243,10 @@ async def get_current_step(session_id: str, current_user: str = Depends(get_curr
     print("Issue:", issue_category)
 
     rag_results = search_documents(issue_category)
-    print("RAG Results:", len(rag_results))
-
-    if rag_results:
-        print(rag_results[0].page_content)
-
-    rag_results = search_documents(issue_category)
-    print("Issue category:", issue_category)
     print("RAG Results Count:", len(rag_results))
 
-
     if rag_results:
+        print("RAG Result:")
         print(rag_results[0].page_content)
 
 

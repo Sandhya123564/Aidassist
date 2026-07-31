@@ -1,9 +1,9 @@
 from pathlib import Path
 
-from langchain_community.vectorstores import Chroma
+from langchain_chroma import Chroma
 from langchain_huggingface import HuggingFaceEmbeddings
 
-CHROMA_DB = str(Path(__file__).parent / "chroma_db")
+CHROMA_DB = str(Path(__file__).parent / "chroma_db_mpnet")
 
 embeddings = None
 db = None
@@ -18,10 +18,10 @@ def load_db():
     if not Path(CHROMA_DB).exists():
         raise Exception(f"Chroma DB not found: {CHROMA_DB}")
 
-    print("Loading embeddings...")
+    print("Loading MPNet embeddings...")
 
     embeddings = HuggingFaceEmbeddings(
-        model_name="sentence-transformers/all-MiniLM-L6-v2"
+        model_name="sentence-transformers/all-mpnet-base-v2"
     )
 
     print("Opening Chroma DB...")
