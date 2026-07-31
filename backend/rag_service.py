@@ -37,14 +37,9 @@ def load_db():
 def search_documents(query):
     load_db()
 
-    print("RAG SEARCH QUERY:", query)
-
     docs = db.similarity_search(query, k=3)
 
-    print("RAG DOCUMENTS FOUND:", len(docs))
-
-    for i, doc in enumerate(docs):
-        print(f"RAG DOC {i}:")
-        print(doc.page_content[:500])
+    print(f"RAG Results Count: {len(docs)}")
+    print(f"RAG Query: {query}")
 
     return docs
