@@ -6,7 +6,7 @@ from langchain_community.vectorstores import Chroma
 from langchain_community.embeddings import HuggingFaceEmbeddings
 
 KNOWLEDGE_BASE = "knowledge_base"
-CHROMA_DB = "chroma_db"
+CHROMA_DB = "chroma_db_mpnet"
 
 documents = []
 
@@ -41,7 +41,7 @@ print(f"Created {len(chunks)} chunks")
 
 # Create embeddings
 embeddings = HuggingFaceEmbeddings(
-    model_name="sentence-transformers/all-MiniLM-L6-v2"
+    model_name="sentence-transformers/all-mpnet-base-v2"
 )
 
 # Save to ChromaDB

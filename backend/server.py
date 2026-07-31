@@ -238,26 +238,18 @@ async def get_current_step(session_id: str, current_user: str = Depends(get_curr
     issue_category = session["classification_result"]["issue_category"]
     print("Issue:", issue_category)
 
-    rag_results = search_documents(issue_category)
-    print("RAG Results:", len(rag_results))
+    rag_query = f"hearing aid {issue_category} troubleshooting user guide"
+    print("RAG Query:", rag_query)
 
-    if rag_results:
-        print(rag_results[0].page_content)
-
-    rag_results = search_documents(issue_category)
-    print("Issue category:", issue_category)
+    rag_results = search_documents(rag_query)
     print("RAG Results Count:", len(rag_results))
 
-
-    if rag_results:
-        print(rag_results[0].page_content)
-
-
-    # Existing troubleshooting steps
     steps = get_steps_for_issue(issue_category)
 
-    #Add RAG information to the first step
     if rag_results:
+        print("RAG Result:")
+        print(rag_results[0].page_content)
+
         steps[0]["instructions"]["en"] += (
             "\n\n📖 User Guide Information:\n\n"
             + rag_results[0].page_content
@@ -403,12 +395,14 @@ app.include_router(api_router)
 
 app.add_middleware(
     CORSMiddleware,
+    allow_origins=[
+        "http://localhost:3000",
+        "https://aidassist-11.onrender.com",
+    ],
     allow_credentials=True,
-    allow_origins=os.environ.get('CORS_ORIGINS', '*').split(','),
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
 @app.on_event("shutdown")
 async def shutdown_db_client():
     client.close()

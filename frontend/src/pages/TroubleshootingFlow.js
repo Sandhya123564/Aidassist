@@ -238,7 +238,7 @@ const handleTriageSubmit = async () => {
             </h2>
 
             <div className="bg-white border border-stone-100 rounded-2xl p-6 space-y-6">
-            <Label>Hearing Aid Brand</Label>
+            <Label className="mb-2 block">Hearing Aid Brand</Label>
 
 <Select
   value={triageData.brand}
@@ -246,7 +246,7 @@ const handleTriageSubmit = async () => {
     setTriageData({ ...triageData, brand: value })
   }
 >
-  <SelectTrigger>
+  <SelectTrigger className="h-12 rounded-lg mt-2">
     <SelectValue placeholder="Select Brand" />
   </SelectTrigger>
 
@@ -260,7 +260,7 @@ const handleTriageSubmit = async () => {
     <SelectItem value="Other">Other</SelectItem>
   </SelectContent>
   </Select>
-  <Label>Hearing Aid Model</Label>
+  <Label className="mb-2 block">Hearing Aid Model</Label>
 
 <Select
   value={triageData.model}
