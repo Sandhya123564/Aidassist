@@ -154,7 +154,6 @@ const handleTriageSubmit = async () => {
     setRagLoading(false);
   }
 };
-
   const handleStepAction = async (action) => {
     if (!sessionId || !currentStep) return;
 
