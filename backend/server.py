@@ -1,4 +1,5 @@
 from rag_service import search_documents
+from local_rag import ask_local_rag
 from fastapi import FastAPI, APIRouter, HTTPException, status, Header, Depends
 from fastapi.responses import Response
 from dotenv import load_dotenv
@@ -198,6 +199,26 @@ async def classify_issue(request: ClassificationRequest, current_user: str = Dep
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Failed to classify complaint"
+        )
+# Local RAG Route
+@api_router.post("/rag/ask")
+async def ask_rag(
+    question: str,
+    current_user: str = Depends(get_current_user)
+):
+    try:
+        answer = ask_local_rag(question)
+
+        return {
+            "question": question,
+            "answer": answer
+        }
+
+    except Exception as e:
+        logger.error(f"Local RAG error: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to generate RAG answer"
         )
 
 # Session Routes

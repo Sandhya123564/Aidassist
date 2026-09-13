@@ -38,6 +38,9 @@ const TroubleshootingFlow = () => {
   const [stepProgress, setStepProgress] = useState(0);
   const [isListening, setIsListening] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [ragQuestion, setRagQuestion] = useState('');
+  const [ragAnswer, setRagAnswer] = useState('');
+  const [ragLoading, setRagLoading] = useState(false);
 
 const t = useCallback((key) => getTranslation(key, language), [language]);
 
@@ -122,6 +125,33 @@ const handleTriageSubmit = async () => {
     toast.error(t('error'));
   } finally {
     setLoading(false);
+  }
+};
+  const handleAskRAG = async () => {
+  if (!ragQuestion.trim()) {
+    toast.error('Please enter a question');
+    return;
+  }
+
+  setRagLoading(true);
+
+  try {
+    const response = await axios.post(
+      `${API}/rag/ask`,
+      null,
+      {
+        params: {
+          question: ragQuestion
+        }
+      }
+    );
+
+    setRagAnswer(response.data.answer);
+  } catch (error) {
+    console.error('RAG error:', error);
+    toast.error('Failed to get answer');
+  } finally {
+    setRagLoading(false);
   }
 };
 
@@ -496,6 +526,45 @@ const handleTriageSubmit = async () => {
                   {currentStep.current_step.instructions[language] || currentStep.current_step.instructions.en}
                 </p>
               </div>
+              {/* Local RAG Assistant */}
+<div className="bg-blue-50 border border-blue-200 rounded-xl p-4 mb-6">
+  <h3 className="font-semibold text-gray-900 mb-3">
+    Ask AI about your hearing aid
+  </h3>
+
+  <Input
+    value={ragQuestion}
+    onChange={(e) => setRagQuestion(e.target.value)}
+    placeholder="Ask a question about your hearing aid..."
+    className="mb-3"
+  />
+
+  <Button
+    onClick={handleAskRAG}
+    disabled={ragLoading}
+    className="w-full"
+  >
+    {ragLoading ? (
+      <>
+        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+        Getting answer...
+      </>
+    ) : (
+      'Ask AI'
+    )}
+  </Button>
+
+  {ragAnswer && (
+    <div className="mt-4 bg-white border border-blue-100 rounded-lg p-4">
+      <p className="text-sm font-medium text-gray-700 mb-1">
+        AI Answer:
+      </p>
+      <p className="text-gray-800 leading-relaxed whitespace-pre-line">
+        {ragAnswer}
+      </p>
+    </div>
+  )}
+</div>
 
               {currentStep.current_step.safety_notes && (
                 <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-6 flex gap-3">

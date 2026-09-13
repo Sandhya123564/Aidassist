@@ -3,7 +3,7 @@ from pathlib import Path
 from langchain_chroma import Chroma
 from langchain_huggingface import HuggingFaceEmbeddings
 
-CHROMA_DB = str(Path(__file__).parent / "chroma_db")
+CHROMA_DB = str(Path(__file__).parent / "chroma_db_mpnet")
 
 embeddings = None
 db = None
