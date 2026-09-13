@@ -3,7 +3,7 @@ from pathlib import Path
 from langchain_chroma import Chroma
 from langchain_huggingface import HuggingFaceEmbeddings
 
-CHROMA_DB = str(Path(__file__).parent / "chroma_db_mpnet")
+CHROMA_DB = str(Path(__file__).parent / "chroma_db_minilm")
 
 embeddings = None
 db = None
@@ -21,9 +21,8 @@ def load_db():
     print("Loading MPNet embeddings...")
 
     embeddings = HuggingFaceEmbeddings(
-        model_name="sentence-transformers/all-mpnet-base-v2"
+    model_name="sentence-transformers/all-MiniLM-L6-v2"
     )
-
     print("Opening Chroma DB...")
 
     db = Chroma(
