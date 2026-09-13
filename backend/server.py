@@ -80,6 +80,9 @@ async def get_current_user(authorization: Optional[str] = Header(None)) -> str:
 @api_router.get("/")
 async def root():
     return {"message": "AidAssist API is running", "version": "1.0.0"}
+@app.get("/")
+async def health_check():
+    return {"status": "AidAssist backend is running"}
 
 # Auth Routes
 @api_router.post("/auth/signup", response_model=TokenResponse)
