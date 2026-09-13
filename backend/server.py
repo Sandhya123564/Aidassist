@@ -1,4 +1,5 @@
 from rag_service import search_documents
+from local_rag import ask_local_rag
 from fastapi import FastAPI, APIRouter, HTTPException, status, Header, Depends
 from fastapi.responses import Response
 from dotenv import load_dotenv
@@ -79,6 +80,9 @@ async def get_current_user(authorization: Optional[str] = Header(None)) -> str:
 @api_router.get("/")
 async def root():
     return {"message": "AidAssist API is running", "version": "1.0.0"}
+@app.get("/")
+async def health_check():
+    return {"status": "AidAssist backend is running"}
 
 # Auth Routes
 @api_router.post("/auth/signup", response_model=TokenResponse)
@@ -199,6 +203,26 @@ async def classify_issue(request: ClassificationRequest, current_user: str = Dep
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Failed to classify complaint"
         )
+# Local RAG Route
+@api_router.post("/rag/ask")
+async def ask_rag(
+    question: str,
+    current_user: str = Depends(get_current_user)
+):
+    try:
+        answer = ask_local_rag(question)
+
+        return {
+            "question": question,
+            "answer": answer
+        }
+
+    except Exception as e:
+        logger.error(f"Local RAG error: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to generate RAG answer"
+        )
 
 # Session Routes
 @api_router.post("/session/create")
@@ -238,30 +262,22 @@ async def get_current_step(session_id: str, current_user: str = Depends(get_curr
     issue_category = session["classification_result"]["issue_category"]
     print("Issue:", issue_category)
 
-    rag_results = search_documents(issue_category)
-    print("RAG Results:", len(rag_results))
+    rag_query = f"hearing aid {issue_category} troubleshooting user guide"
+    print("RAG Query:", rag_query)
 
-    if rag_results:
-        print(rag_results[0].page_content)
+    #rag_results = search_documents(rag_query)
+    #print("RAG Results Count:", len(rag_results))
 
-    rag_results = search_documents(issue_category)
-    print("Issue category:", issue_category)
-    print("RAG Results Count:", len(rag_results))
-
-
-    if rag_results:
-        print(rag_results[0].page_content)
-
-
-    # Existing troubleshooting steps
     steps = get_steps_for_issue(issue_category)
 
-    #Add RAG information to the first step
-    if rag_results:
-        steps[0]["instructions"]["en"] += (
-            "\n\n📖 User Guide Information:\n\n"
-            + rag_results[0].page_content
-        )
+    #if rag_results:
+    #    print("RAG Result:")
+     #   print(rag_results[0].page_content)
+
+      #  steps[0]["instructions"]["en"] += (
+       #     "\n\n📖 User Guide Information:\n\n"
+        #    + rag_results[0].page_content
+        #)
 
     current_step_index = session.get("current_step_index", 0)
 
@@ -403,12 +419,14 @@ app.include_router(api_router)
 
 app.add_middleware(
     CORSMiddleware,
+    allow_origins=[
+        "http://localhost:3000",
+        "https://aidassist-11.onrender.com",
+    ],
     allow_credentials=True,
-    allow_origins=os.environ.get('CORS_ORIGINS', '*').split(','),
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
 @app.on_event("shutdown")
 async def shutdown_db_client():
     client.close()

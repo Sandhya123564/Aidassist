@@ -6,7 +6,7 @@ from langchain_community.vectorstores import Chroma
 from langchain_community.embeddings import HuggingFaceEmbeddings
 
 KNOWLEDGE_BASE = "knowledge_base"
-CHROMA_DB = "chroma_db"
+CHROMA_DB = "chroma_db_minilm"
 
 documents = []
 
