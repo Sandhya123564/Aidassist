@@ -265,8 +265,8 @@ async def get_current_step(session_id: str, current_user: str = Depends(get_curr
     rag_query = f"hearing aid {issue_category} troubleshooting user guide"
     print("RAG Query:", rag_query)
 
-    rag_results = search_documents(rag_query)
-    print("RAG Results Count:", len(rag_results))
+    #rag_results = search_documents(rag_query)
+    #print("RAG Results Count:", len(rag_results))
 
     steps = get_steps_for_issue(issue_category)
 
